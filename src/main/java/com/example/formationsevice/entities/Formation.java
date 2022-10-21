@@ -1,6 +1,7 @@
 package com.example.formationsevice.entities;
 
 
+import com.example.formationsevice.model.Chercheur;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class Formation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String type;
 
     @Transient
     private Chercheur responsable;

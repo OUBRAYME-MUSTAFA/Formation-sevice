@@ -1,19 +1,22 @@
 package com.example.formationsevice.web;
 
-import com.example.formationsevice.entities.Chercheur;
+import com.example.formationsevice.model.Chercheur;
 import com.example.formationsevice.entities.Formation;
 import com.example.formationsevice.feign.ChercheurRestClient;
 import com.example.formationsevice.repository.FormationRepository;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-public class FormationController {
+@EnableFeignClients
+@CrossOrigin("http://localhost:4200/")
+@RestController
+public class FormationRestController {
 
     private FormationRepository formationRepository;
     private ChercheurRestClient chercheurRestClient;
 
-    public FormationController(FormationRepository formationRepository, ChercheurRestClient chercheurRestClient) {
+    public FormationRestController(FormationRepository formationRepository, ChercheurRestClient chercheurRestClient) {
         this.formationRepository = formationRepository;
         this.chercheurRestClient = chercheurRestClient;
     }
@@ -26,8 +29,6 @@ public class FormationController {
             Chercheur chercheur = chercheurRestClient.getChercheurById(formation.getResponsableId());
             formation.setResponsable(chercheur);
         });
-//
-
 
         return list__;
     }
@@ -35,7 +36,7 @@ public class FormationController {
     @PostMapping("addFormation")
     public Formation addLabo(@RequestBody Formation formation) {
 
-        Chercheur chercheur = chercheurRestClient.getChercheurById(formation.getResponsableId());
+        Chercheur chercheur = chercheurRestClient.getChercheurById(formation.getResponsable().getId());
         formation.setResponsableId(chercheur.getId());
 
         return formationRepository.save(formation);

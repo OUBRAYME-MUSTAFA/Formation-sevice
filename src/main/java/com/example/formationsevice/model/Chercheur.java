@@ -1,4 +1,4 @@
-package com.example.formationsevice.entities;
+package com.example.formationsevice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,14 +8,13 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Chercheur {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id ;
     private String name;
     private String role;
