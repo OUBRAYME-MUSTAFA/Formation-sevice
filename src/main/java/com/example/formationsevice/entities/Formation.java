@@ -24,6 +24,9 @@ public class Formation {
     @Transient
     private Chercheur responsable;
     private Long responsableId;
-    private String documentURL;
-    private String imageURL;
+    //@Column(columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private  byte[] document;
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private  byte[]  image;
 }

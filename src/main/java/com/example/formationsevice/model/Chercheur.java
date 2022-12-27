@@ -6,17 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Data @NoArgsConstructor @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE" ,length = 4)
 public class Chercheur {
     @Id
-    private Long id ;
-    private String name;
-    private String role;
-
+    private Long id;
+    private String nom;
+    private String prenom;
 }
