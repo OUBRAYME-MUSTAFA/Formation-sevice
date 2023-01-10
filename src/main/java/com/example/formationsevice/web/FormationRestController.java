@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,13 +43,6 @@ public class FormationRestController {
         return list__;
     }
 
-//    @GetMapping("/downloadDoc/{id}")
-//    public ResponseEntity<byte[]> downloadDoc(@PathVariable Long id) throws IOException {
-//        Formation formation= formationRepository.findById(id).get();
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + formation.getName() + ".pdf")
-//                .body(formation.getDocument());
-//    }
     @GetMapping("/downloadDoc/{id}")
     public void downloadDoc(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Formation f = formationRepository.findById(id).get();
@@ -78,28 +72,33 @@ public class FormationRestController {
     }
 
     @PostMapping(value = "addFormation", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Formation addLabo(@RequestPart Formation formation ,
+    public ResponseEntity<Object> addFormation(@RequestPart("formation") Formation formation ,
                              @RequestPart("document") MultipartFile document,
                              @RequestPart("image") MultipartFile image ) throws Exception{
+        if(formation.getResponsable() == null){
+            System.out.println("il faut choisir un responsable  avant la creation de ce Labo : "+formation.getName());
+            return  new ResponseEntity<>("il faut choisir un responsable  avant la creation " +
+                    "de ce Labo "+formation.getName(), HttpStatus.BAD_REQUEST);
+        }
 
-//        Formation formation = new ObjectMapper().readValue(formation1 , Formation.class);
         if(document != null )
         formation.setDocument(document.getBytes());
         if(image != null )
         formation.setImage(image.getBytes());
         formation.setResponsableId(formation.getResponsable().getId());
 
-        return formationRepository.save(formation);
+        formationRepository.save(formation);
+        return new ResponseEntity<>(formation, HttpStatus.CREATED);
 
     }
 
-    @PutMapping("updateFormation")
-    public Formation updateLabo(@RequestPart("formation") Formation formation,
+    @PutMapping( "/updateFormation")
+    public ResponseEntity<Object> updateFormation(@RequestPart("formation") Formation formation,
                                 @RequestPart("document") MultipartFile document,
-                                @RequestPart("image") MultipartFile image ) throws Exception {
+                                @RequestPart("image") MultipartFile image ) throws IOException , Exception {
+        System.out.println("yes i am in ************************");
 
-        return addLabo(formation , document , image);
-
+        return addFormation(formation , document , image);
     }
 
     @DeleteMapping(path = "/formation/{code}")
