@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.formationsevice.util.FileUtils;
+
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +50,7 @@ public class FormationRestController {
         Formation f = formationRepository.findById(id).get();
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=  "+f.getName()+"Description_Doc.pdf";
+        String headerValue = "attachment; filename=  "+f.getName()+"_Description_Doc.pdf";
 
         response.setHeader(headerKey,headerValue);
 
@@ -62,13 +64,27 @@ public class FormationRestController {
         Formation f = formationRepository.findById(id).get();
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=  "+f.getName()+"Description_Image.jpg";
+        String headerValue = "attachment; filename=  "+f.getName()+"_Description_Image.jpg";
 
         response.setHeader(headerKey,headerValue);
 
         ServletOutputStream servletOutputStream = response.getOutputStream();
         servletOutputStream.write(f.getImage());
         servletOutputStream.close();
+    }
+
+    @GetMapping("/downloadByteImg/{id}")
+    public byte[] downloadByteImg(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Formation f = formationRepository.findById(id).get();
+        return f.getImage();
+
+    }
+
+    @GetMapping("/downloadByteDoc/{id}")
+    public byte[] downloadByteDoc(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Formation f = formationRepository.findById(id).get();
+        return f.getDocument();
+
     }
 
     @PostMapping(value = "addFormation", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -80,8 +96,9 @@ public class FormationRestController {
             return  new ResponseEntity<>("il faut choisir un responsable  avant la creation " +
                     "de ce Labo "+formation.getName(), HttpStatus.BAD_REQUEST);
         }
-
+        System.out.println("i am here ");
         if(document != null )
+
         formation.setDocument(document.getBytes());
         if(image != null )
         formation.setImage(image.getBytes());
@@ -92,10 +109,10 @@ public class FormationRestController {
 
     }
 
-    @PutMapping( "/updateFormation")
+    @PutMapping( value = "updateFormation", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> updateFormation(@RequestPart("formation") Formation formation,
                                 @RequestPart("document") MultipartFile document,
-                                @RequestPart("image") MultipartFile image ) throws IOException , Exception {
+                                @RequestPart("image") MultipartFile image ) throws Exception {
         System.out.println("yes i am in ************************");
 
         return addFormation(formation , document , image);
