@@ -118,6 +118,29 @@ public class FormationRestController {
         return addFormation(formation , document , image);
     }
 
+    @PutMapping( value = "updateFormation1", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Object> updateFormation1(@RequestPart("formation") Formation formation,
+                                                  @RequestPart("document") MultipartFile document) throws Exception {
+        System.out.println("yes i am in ************************");
+
+        return addFormation(formation , document , null);
+    }
+
+    @PutMapping( value = "updateFormation2", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Object> updateFormation2(@RequestPart("formation") Formation formation,
+                                                  @RequestPart("image") MultipartFile image ) throws Exception {
+        System.out.println("yes i am in ************************");
+
+        return addFormation(formation , null , image);
+    }
+
+    @PutMapping( value = "updateFormation3", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Object> updateFormation3(@RequestPart("formation") Formation formation) throws Exception {
+        System.out.println("yes i am in ************************");
+
+        return addFormation(formation , null , null);
+    }
+
     @DeleteMapping(path = "/formation/{code}")
     public void deleteLabo(@PathVariable(name = "code") long code) {
 
